@@ -10,14 +10,17 @@ import org.apache.commons.math3.stat.regression.AbstractMultipleLinearRegression
 
 import android.os.Bundle;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
 
     double[] y;
     double[][] x;
-    public static final int DIMENSION_ONE = 8;
-    public static final int DIMENSION_TWO = 3;
+    public int dimension_one;
+    public int dimension_two;
+    PersonData user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,17 +28,37 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
 
 
-        y = new double[DIMENSION_ONE];
-        for (int a=0; a<DIMENSION_ONE; a++){
-            y[a]=Math.ceil(Math.random()*5);
+        user = new PersonData(new ArrayList<String>(Arrays.asList("Stretch", "Eat Healthy", "Meditate")));
+        user.addData(4.0, new ArrayList<Double>(Arrays.asList(0.0, 0.0, 1.0)), new Date());
+        user.addData(3.0, new ArrayList<Double>(Arrays.asList(1.0, 1.0, 1.0)), new Date());
+        user.addData(2.0, new ArrayList<Double>(Arrays.asList(0.0, 0.0, 1.0)), new Date());
+        user.addData(4.0, new ArrayList<Double>(Arrays.asList(1.0, 1.0, 0.0)), new Date());
+        user.addData(5.0, new ArrayList<Double>(Arrays.asList(1.0, 0.0, 0.0)), new Date());
+        user.addData(5.0, new ArrayList<Double>(Arrays.asList(1.0, 1.0, 1.0)), new Date());
+        user.addData(4.0, new ArrayList<Double>(Arrays.asList(1.0, 1.0, 1.0)), new Date());
+        user.addData(4.0, new ArrayList<Double>(Arrays.asList(1.0, 0.0, 1.0)), new Date());
+        user.addData(1.0, new ArrayList<Double>(Arrays.asList(0.0, 1.0, 1.0)), new Date());
+        user.addData(5.0, new ArrayList<Double>(Arrays.asList(1.0, 1.0, 1.0)), new Date());
+        user.addData(2.0, new ArrayList<Double>(Arrays.asList(0.0, 1.0, 0.0)), new Date());
+
+        dimension_one = user.moods.size();
+        dimension_two = user.habitTracker.get(0).size();
+
+
+        y = new double[dimension_one];
+        for (int a=0; a<dimension_one; a++){
+            y[a]=user.moods.get(a);
         }
 
-        x = new double[DIMENSION_ONE][DIMENSION_TWO]; //first is data, second is predictors
-        for(int i=0; i<DIMENSION_ONE; i++){
-            for (int j=0; j<DIMENSION_TWO; j++){
-                x[i][j]=Math.round(Math.random());
+        x = new double[dimension_one][dimension_two]; //first is data, second is predictors
+        for(int i=0; i<dimension_one; i++){
+            for (int j=0; j<dimension_two; j++){
+                x[i][j]=user.habitTracker.get(i).get(j);
             }
         }
+
+
+
         OLSMultipleLinearRegression myMLR = new OLSMultipleLinearRegression();
         myMLR.newSampleData(y,x);
         RealVector resultsVector = myMLR.calculateBeta();
@@ -48,9 +71,10 @@ public class MainActivity extends AppCompatActivity{
             resultsArray[i-1]=tempArray[i];
         }
         System.out.println(Arrays.toString(resultsArray));
-        System.out.println(getIndexOfLargest(resultsArray));
-        System.out.println(getIndexOfSecondLargest(resultsArray));
-        System.out.println(getIndexOfThirdLargest(resultsArray));
+        System.out.println(user.habits.get(getIndexOfLargest(resultsArray)));
+        System.out.println(user.habits.get(getIndexOfSecondLargest(resultsArray)));
+        System.out.println(user.habits.get(getIndexOfThirdLargest(resultsArray)));
+
 
 
 
@@ -116,3 +140,4 @@ public class MainActivity extends AppCompatActivity{
     }
 
 }
+
